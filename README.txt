@@ -40,6 +40,27 @@ Sprint 4:
   crie o usuário dela em Authentication > Users no painel do Supabase — não
   há cadastro pelo próprio site.
 
+Sprint 5:
+- Site publicado no GitHub Pages: https://jonathancontcomex.github.io/raquel-1-aninho/
+  (painel em /painel/). Repositório GitHub: jonathancontcomex/raquel-1-aninho
+  (público — necessário para Pages funcionar no plano gratuito).
+- Redesenho visual: convite, card "Quem é você?", card de resumo/confirmação
+  e tela de agradecimento agora usam ilustrações reais (castelo, princesas,
+  coroa etc. em assets/illustrations/frame-*.jpg) como fundo, com o texto de
+  verdade (nome, data, endereço, formulário) sobreposto por cima via CSS —
+  nada de texto "chapado" em imagem, tudo continua editável/acessível.
+- assets/illustrations/fontes-originais/ guarda as imagens originais (antes
+  do recorte) caso precise recortar de novo ou ajustar posições.
+- Falta uma ilustração equivalente para o card "Você terá acompanhantes?"
+  (passo 2) — por enquanto ele usa um tratamento decorativo mais simples
+  (borda dourada + cantos com recortes do castelo/rosas). Se gerar essa
+  ilustração no mesmo estilo das outras, é só pedir para eu encaixar.
+- Imagens comprimidas para JPEG (~200-300KB cada, eram 2-3MB em PNG) para
+  o site carregar rápido.
+
 Próximo passo:
+- Ilustração dedicada para o card de acompanhantes (passo 2).
 - Exportação da lista de confirmados (Excel/PDF) direto do painel.
-- Publicar o site (hospedagem/domínio) quando o conteúdo estiver fechado.
+- Ilustração do painel administrativo (assets/illustrations/fontes-originais/original-painel.png
+  já existe, mas ainda não foi encaixada — tem gráfico de rosca e cards que
+  exigem mais trabalho para casar com dados dinâmicos).
