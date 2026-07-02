@@ -12,7 +12,7 @@
 .frame-thanks{aspect-ratio:1423/822;background:url('../assets/illustrations/frame-thanks.jpg') center/contain no-repeat}
 
 /* -- hero -- */
-.ic-title{position:absolute;top:19%;left:31%;right:12%}
+.ic-title{position:absolute;top:19%;left:28%;right:15%}
 .ic-title .subline{margin:0;font-size:4cqw}
 .ic-title .title{margin:.5cqw 0 0;font-size:9cqw;line-height:.85}
 .ic-story{position:absolute;top:31%;left:29%;right:13%;margin:0;font-size:2.7cqw;line-height:1.3}
