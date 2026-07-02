@@ -12,11 +12,11 @@
 .frame-thanks{aspect-ratio:1423/822;background:url('../assets/illustrations/frame-thanks.jpg') center/contain no-repeat}
 
 /* -- hero -- */
-.ic-title{position:absolute;top:19%;left:14%;right:14%}
-.ic-title .subline{margin:0;font-size:4.4cqw}
-.ic-title .title{margin:.5cqw 0 0;font-size:10cqw;line-height:.85}
-.ic-story{position:absolute;top:31%;left:16%;right:16%;margin:0;font-size:3cqw;line-height:1.3}
-.ic-info{position:absolute;top:38.5%;left:19%;right:15%;margin:0;gap:2.4%}
+.ic-title{position:absolute;top:19%;left:31%;right:12%}
+.ic-title .subline{margin:0;font-size:4cqw}
+.ic-title .title{margin:.5cqw 0 0;font-size:9cqw;line-height:.85}
+.ic-story{position:absolute;top:31%;left:29%;right:13%;margin:0;font-size:2.7cqw;line-height:1.3}
+.ic-info{position:absolute;top:38.5%;left:31%;right:13%;margin:0;gap:2.4%}
 .ic-info .info{font-size:2.7cqw}
 .ic-info .ico{width:7cqw;height:7cqw;font-size:3.6cqw;border-radius:26%}
 .ic-btn{position:absolute;top:70.6%;left:24%;right:24%;height:6.4%;display:flex;align-items:center;justify-content:center;text-decoration:none;color:#fff;font-family:'Fraunces',serif;font-weight:700;font-size:3.6cqw}
