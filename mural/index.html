@@ -1,0 +1,9 @@
+<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>Mural da Festa • Raquel</title><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Quicksand:wght@400;600;700;800&display=swap" rel="stylesheet"><link rel="stylesheet" href="../css/style.css"><link rel="stylesheet" href="mural.css"></head><body><div class="magic-bg"></div><main class="app mural-app">
+
+<section class="mural-hero section"><h1>📸 Mural da Festa</h1><p class="helper">Tire uma foto ou escolha uma da galeria e mande pra gente! Todas ficam guardadas aqui para sempre, como lembrança do 1 aninho da Raquel.</p></section>
+
+<section class="mural-upload section"><input class="input" type="text" id="guestName" placeholder="Seu nome (opcional)" maxlength="60"><label class="mural-file-label" id="fileLabel" for="photoInput"><span id="fileLabelText">📷 Escolher ou tirar uma foto</span></label><input type="file" id="photoInput" accept="image/*" capture="environment" hidden><button class="btn btn-primary mural-send" id="sendPhoto" disabled>Enviar para o mural</button><p class="mural-status" id="uploadStatus"></p></section>
+
+<section class="mural-gallery-wrap section"><h2>Fotos da festa</h2><p class="helper" id="galleryEmpty">Ainda não tem nenhuma foto. Seja a primeira pessoa a postar! 🎉</p><div class="mural-gallery" id="muralGallery"></div></section>
+
+</main><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="../js/supabase-config.js"></script><script src="../js/supabase-client.js"></script><script src="mural.js"></script></body></html>

@@ -58,9 +58,29 @@ Sprint 5:
 - Imagens comprimidas para JPEG (~200-300KB cada, eram 2-3MB em PNG) para
   o site carregar rápido.
 
+Sprint 6:
+- Galeria de fotos da página inicial trocada por uma sequência da história:
+  gravidez (foto de capa, "Onde tudo começou"), recém-nascida, 3, 6, 9 e 11
+  meses (assets/fotos/). Legendas condizentes em index.html.
+- Mural da Festa (mural/): página nova onde qualquer convidado sobe fotos
+  pelo celular sem precisar de login (nome é opcional), e todas ficam
+  arquivadas permanentemente numa galeria pública. Link "📸 Mural da Festa"
+  aparece no convite e na tela de agradecimento.
+  - Fotos guardadas no Supabase Storage (bucket `mural-fotos`, público) e
+    registradas na tabela `mural_photos` — schema em supabase/mural-schema.sql
+    (rode esse script no SQL Editor antes de usar).
+  - Envio é aberto (anon insert) de propósito, para não ter fricção na hora
+    da festa — qualquer pessoa com o link pode enviar qualquer imagem.
+  - Moderação: quem estiver logado como admin (mesma conta do /painel/) vê um
+    botão de apagar em cada foto do mural — remove do Storage e do banco.
+    Sessão de login é compartilhada entre /painel/ e /mural/ (mesmo domínio).
+  - Limite de 8MB por foto (validado no navegador antes de enviar).
+
 Próximo passo:
 - Ilustração dedicada para o card de acompanhantes (passo 2).
 - Exportação da lista de confirmados (Excel/PDF) direto do painel.
 - Ilustração do painel administrativo (assets/illustrations/fontes-originais/original-painel.png
   já existe, mas ainda não foi encaixada — tem gráfico de rosca e cards que
   exigem mais trabalho para casar com dados dinâmicos).
+- Acompanhar o uso de armazenamento do Supabase (plano grátis tem limite,
+  ~1GB) conforme as fotos do mural forem chegando no dia da festa.

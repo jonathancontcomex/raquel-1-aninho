@@ -1,0 +1,28 @@
+.mural-app{max-width:760px;padding-top:30px}
+.mural-hero{padding:30px;text-align:center}
+.mural-hero h1{font-family:'Fraunces',serif;color:var(--pink2);font-size:34px;margin:0 0 10px}
+.mural-hero .helper{margin:0 auto;max-width:520px}
+
+.mural-upload{margin-top:18px;padding:26px;display:grid;gap:12px}
+.mural-file-label{display:flex;align-items:center;justify-content:center;gap:8px;border:2px dashed #f49ac0;background:#fff9fb;color:var(--pink2);padding:16px;border-radius:16px;font-weight:800;font-size:15px;cursor:pointer;text-align:center}
+.mural-file-label.has-file{border-style:solid;background:#ffeef5}
+.mural-send{width:100%}
+.mural-send:disabled{opacity:.5;cursor:not-allowed}
+.mural-send:disabled:hover{transform:none}
+.mural-status{text-align:center;margin:0;font-weight:700;min-height:20px;color:var(--pink2)}
+.mural-status.error{color:var(--red)}
+
+.mural-gallery-wrap{margin-top:18px;padding:26px}
+.mural-gallery-wrap h2{font-family:'Fraunces',serif;color:var(--pink2);font-size:24px;margin:0 0 4px;text-align:center}
+#galleryEmpty{margin-top:4px}
+.mural-gallery{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:16px}
+.mural-tile{position:relative;border-radius:14px;overflow:hidden;background:#fff;box-shadow:0 8px 18px rgba(81,33,58,.12);aspect-ratio:1}
+.mural-tile img{width:100%;height:100%;object-fit:cover;display:block}
+.mural-tile .cap{position:absolute;left:0;right:0;bottom:0;background:linear-gradient(0deg,rgba(0,0,0,.55),transparent);color:#fff;font-size:11px;font-weight:700;padding:14px 8px 6px;text-align:center}
+.mural-tile .del{position:absolute;top:6px;right:6px;width:26px;height:26px;border-radius:50%;border:none;background:rgba(0,0,0,.55);color:#fff;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.mural-tile .del:hover{background:var(--red)}
+
+@media(max-width:600px){
+  .mural-gallery{grid-template-columns:repeat(2,1fr)}
+  .mural-hero h1{font-size:27px}
+}
