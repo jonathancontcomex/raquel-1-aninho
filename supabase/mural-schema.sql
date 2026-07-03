@@ -10,13 +10,13 @@ on conflict (id) do nothing;
 create policy "Qualquer pessoa pode enviar foto ao mural"
   on storage.objects
   for insert
-  to anon
+  to public
   with check (bucket_id = 'mural-fotos');
 
 create policy "Qualquer pessoa pode ver as fotos do mural"
   on storage.objects
   for select
-  to anon
+  to public
   using (bucket_id = 'mural-fotos');
 
 create policy "Admins podem apagar fotos do mural"
@@ -38,13 +38,13 @@ alter table public.mural_photos enable row level security;
 create policy "Qualquer pessoa pode registrar uma foto no mural"
   on public.mural_photos
   for insert
-  to anon
+  to public
   with check (true);
 
 create policy "Qualquer pessoa pode ver a lista de fotos do mural"
   on public.mural_photos
   for select
-  to anon
+  to public
   using (true);
 
 create policy "Admins podem apagar registros do mural"
