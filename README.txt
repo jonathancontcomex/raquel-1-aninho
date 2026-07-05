@@ -75,6 +75,19 @@ Sprint 6:
     botão de apagar em cada foto do mural — remove do Storage e do banco.
     Sessão de login é compartilhada entre /painel/ e /mural/ (mesmo domínio).
   - Limite de 8MB por foto (validado no navegador antes de enviar).
+- Lista de convidados x confirmados, no /painel/: cole nomes (pessoa ou
+  família) e compare com quem já confirmou.
+  - Tabela `guest_list` (supabase/guest-list-schema.sql +
+    supabase/guest-list-matching.sql — rode os dois no SQL Editor).
+  - Confirmação é MANUAL, com sugestões: quando há nomes repetidos (ex: 3
+    "Tiago" confirmados), o painel mostra todos os candidatos prováveis e
+    você clica em qual é o certo — não adivinha sozinho. Cada pessoa só pode
+    ser vinculada a um nome da lista por vez (some das sugestões depois de
+    escolhida).
+  - Seção "Confirmados que ainda não estão na sua lista": mostra quem
+    confirmou presença mas não estava na lista original (ex: convidado
+    trouxe um familiar extra) — botão "+" adiciona e já confirma na hora.
+  - "Desfazer" no nome já confirmado, caso tenha escolhido a pessoa errada.
 
 Próximo passo:
 - Ilustração dedicada para o card de acompanhantes (passo 2).

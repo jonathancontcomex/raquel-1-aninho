@@ -12,6 +12,14 @@ function significantWords(name) {
   return normalize(name).split(/\s+/).filter(w => w.length >= 2 && !STOPWORDS.includes(w));
 }
 
+function escapeHtml(s) {
+  return (s || '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+
+function escapeAttr(s) {
+  return escapeHtml(s).replace(/`/g, '&#96;');
+}
+
 let rsvpsData = [];
 
 async function renderAdmin() {
@@ -29,39 +37,57 @@ async function renderAdmin() {
   $('#stFamilies').textContent = confirmed.length;
   $('#adminRows').innerHTML = data.map(x => {
     const host = { first: x.host_first, last: x.host_last };
-    return `<tr><td>${fullName(host)}</td><td>${(x.people || []).slice(1).map(fullName).join(', ') || '-'}</td><td><span class="tag">${x.status === 'confirmed' ? 'Confirmado' : 'Não irá'}</span></td><td>${new Date(x.created_at).toLocaleString('pt-BR')}</td></tr>`;
+    return `<tr><td>${escapeHtml(fullName(host))}</td><td>${(x.people || []).slice(1).map(p => escapeHtml(fullName(p))).join(', ') || '-'}</td><td><span class="tag">${x.status === 'confirmed' ? 'Confirmado' : 'Não irá'}</span></td><td>${new Date(x.created_at).toLocaleString('pt-BR')}</td></tr>`;
   }).join('') || '<tr><td colspan="4">Nenhuma confirmação ainda.</td></tr>';
   renderGuestList();
 }
 
-function rowSearchText(row) {
-  const names = [`${row.host_first} ${row.host_last}`, ...(row.people || []).map(fullName)];
-  return normalize(names.join(' '));
+// -- lista de convidados x confirmados, com confirmação manual --
+
+function allConfirmedPeople() {
+  return rsvpsData
+    .filter(r => r.status === 'confirmed')
+    .flatMap(r => (r.people || []).map(p => ({ rsvpId: r.id, personName: fullName(p), hostName: fullName({ first: r.host_first, last: r.host_last }) })));
 }
 
-function matchStatus(guestName) {
+function candidatesFor(guestName, usedKeys) {
   const words = significantWords(guestName);
-  if (!words.length) return 'pending';
-  const confirmedHit = rsvpsData.some(r => r.status === 'confirmed' && words.every(w => rowSearchText(r).includes(w)));
-  if (confirmedHit) return 'confirmed';
-  const declinedHit = rsvpsData.some(r => r.status === 'declined' && words.every(w => rowSearchText(r).includes(w)));
-  if (declinedHit) return 'declined';
-  return 'pending';
+  if (!words.length) return [];
+  return allConfirmedPeople().filter(p => {
+    const key = `${p.rsvpId}::${p.personName}`;
+    if (usedKeys.has(key)) return false;
+    return words.every(w => normalize(p.personName).includes(w));
+  });
 }
 
 async function renderGuestList() {
   const { data, error } = await sbClient.from('guest_list').select('*').order('created_at', { ascending: true });
   if (error) { console.error(error); return }
-  const rows = data.map(g => ({ ...g, status: matchStatus(g.name) }));
-  $('#glTotal').textContent = rows.length;
-  $('#glConfirmed').textContent = rows.filter(r => r.status === 'confirmed').length;
-  $('#glPending').textContent = rows.filter(r => r.status === 'pending').length;
-  const tagHtml = status => status === 'confirmed'
-    ? '<span class="gl-tag ok">✓ Confirmado</span>'
-    : status === 'declined'
-      ? '<span class="gl-tag no">Avisou que não vai</span>'
-      : '<span class="gl-tag pending">Sem resposta</span>';
-  $('#guestListRows').innerHTML = rows.map(r => `<tr><td>${r.name}</td><td>${tagHtml(r.status)}</td><td><button class="gl-del" title="Remover da lista" onclick="removeGuestListEntry('${r.id}')">✕</button></td></tr>`).join('') || '<tr><td colspan="3">Nenhum nome na lista ainda.</td></tr>';
+
+  const usedKeys = new Set(data.filter(r => r.matched_rsvp_id).map(r => `${r.matched_rsvp_id}::${r.matched_person_name}`));
+
+  $('#glTotal').textContent = data.length;
+  $('#glConfirmed').textContent = data.filter(r => r.matched_rsvp_id).length;
+  $('#glPending').textContent = data.filter(r => !r.matched_rsvp_id).length;
+
+  $('#guestListRows').innerHTML = data.map(r => {
+    const nameCell = escapeHtml(r.name);
+    let statusCell;
+    if (r.matched_rsvp_id) {
+      statusCell = `<div class="gl-matched"><span class="gl-tag ok">✓ ${escapeHtml(r.matched_person_name)}</span><button class="gl-undo" data-action="unmatch" data-gl-id="${r.id}">Desfazer</button></div>`;
+    } else {
+      const candidates = candidatesFor(r.name, usedKeys);
+      if (candidates.length) {
+        statusCell = `<div class="gl-suggestions">${candidates.map(c => `<button class="gl-suggest-btn" data-action="confirm" data-gl-id="${r.id}" data-rsvp-id="${c.rsvpId}" data-person="${escapeAttr(c.personName)}">${escapeHtml(c.personName)} — confirmar</button>`).join('')}</div>`;
+      } else {
+        statusCell = `<span class="gl-none">Sem correspondência ainda</span>`;
+      }
+    }
+    return `<tr><td>${nameCell}</td><td>${statusCell}</td><td><button class="gl-del" data-action="remove" data-gl-id="${r.id}" title="Remover da lista">✕</button></td></tr>`;
+  }).join('') || '<tr><td colspan="3">Nenhum nome na lista ainda.</td></tr>';
+
+  const unmatchedPeople = allConfirmedPeople().filter(p => !usedKeys.has(`${p.rsvpId}::${p.personName}`));
+  $('#unmatchedRows').innerHTML = unmatchedPeople.map(p => `<tr><td>${escapeHtml(p.personName)}</td><td>${escapeHtml(p.hostName)}</td><td><button class="gl-add-person-btn" data-action="addmatch" data-rsvp-id="${p.rsvpId}" data-person="${escapeAttr(p.personName)}" title="Adicionar à lista já confirmado">+</button></td></tr>`).join('') || '<tr><td colspan="3">Todo mundo confirmado já está na sua lista.</td></tr>';
 }
 
 async function saveGuestList() {
@@ -78,11 +104,35 @@ async function saveGuestList() {
   renderGuestList();
 }
 
+async function confirmMatch(glId, rsvpId, personName) {
+  await sbClient.from('guest_list').update({ matched_rsvp_id: rsvpId, matched_person_name: personName }).eq('id', glId);
+  renderGuestList();
+}
+
+async function unmatchGuest(glId) {
+  await sbClient.from('guest_list').update({ matched_rsvp_id: null, matched_person_name: null }).eq('id', glId);
+  renderGuestList();
+}
+
 async function removeGuestListEntry(id) {
   await sbClient.from('guest_list').delete().eq('id', id);
   renderGuestList();
 }
-window.removeGuestListEntry = removeGuestListEntry;
+
+async function addAndMatch(rsvpId, personName) {
+  await sbClient.from('guest_list').insert([{ name: personName, matched_rsvp_id: rsvpId, matched_person_name: personName }]);
+  renderGuestList();
+}
+
+document.addEventListener('click', e => {
+  const btn = e.target.closest('[data-action]');
+  if (!btn) return;
+  const action = btn.dataset.action;
+  if (action === 'remove') removeGuestListEntry(btn.dataset.glId);
+  else if (action === 'unmatch') unmatchGuest(btn.dataset.glId);
+  else if (action === 'confirm') confirmMatch(btn.dataset.glId, btn.dataset.rsvpId, btn.dataset.person);
+  else if (action === 'addmatch') addAndMatch(btn.dataset.rsvpId, btn.dataset.person);
+});
 
 function unlock() {
   $('#gate').classList.add('hidden');

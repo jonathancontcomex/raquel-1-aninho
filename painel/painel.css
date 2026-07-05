@@ -34,6 +34,16 @@
 .gl-tag.no{background:#ffe2ee;color:var(--pink2)}
 .gl-tag.pending{background:#fff2d6;color:#9a6b00}
 .gl-del{border:0;background:#ffe7f0;color:var(--pink2);border-radius:10px;width:26px;height:26px;cursor:pointer;font-size:13px}
+.gl-sub{font-family:'Fraunces',serif;color:var(--pink2);font-size:17px;margin:24px 0 4px}
+.guest-list-block .table td{white-space:normal;vertical-align:top}
+.gl-suggestions{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.gl-suggest-btn{border:1px dashed #f0bad0;background:#fff8fb;color:var(--ink);border-radius:99px;padding:5px 12px;font-size:12px;font-weight:700;cursor:pointer}
+.gl-suggest-btn:hover{background:#ffeef5;border-style:solid}
+.gl-none{color:var(--muted);font-size:12px;font-style:italic}
+.gl-matched{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.gl-undo{border:1px solid #f0c7d7;background:white;color:var(--muted);border-radius:99px;padding:4px 10px;font-size:11px;cursor:pointer}
+.gl-add-person-btn{border:0;background:var(--pink2);color:white;border-radius:99px;width:28px;height:28px;font-size:14px;cursor:pointer;font-weight:900}
+.gl-add-person-btn:hover{background:var(--pink)}
 @media(max-width:850px){
   .gl-stats{grid-template-columns:repeat(3,1fr)}
 }
