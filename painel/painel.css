@@ -20,6 +20,23 @@
 .table{background:white;border:1px solid #f0c7d7;border-radius:16px;overflow:auto}
 .table table{width:100%;border-collapse:collapse;font-size:13px}
 .table th,.table td{padding:11px;border-bottom:1px solid #f7dbe6;text-align:left;white-space:nowrap}
+.guest-list-block{margin-top:26px;border-top:1px dashed #f0c7d7;padding-top:20px}
+.guest-list-block h3{font-family:'Fraunces',serif;color:var(--pink2);font-size:20px;margin:0 0 4px}
+.gl-helper{color:var(--muted);font-size:13px;margin:0 0 10px}
+#guestListInput{width:100%;border:1px solid #f0bad0;background:#fff8fb;border-radius:14px;padding:12px;font-family:'Quicksand';font-size:14px;color:var(--ink);resize:vertical}
+.gl-add-btn{margin-top:10px;padding:11px 22px;font-size:15px}
+.gl-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:16px 0}
+.gl-stat{background:white;border:1px solid #f0c7d7;border-radius:14px;padding:12px;text-align:center}
+.gl-stat span{display:block;font-size:24px;font-weight:900;color:var(--pink2)}
+.gl-stat label{font-size:11px;color:var(--muted);font-weight:800}
+.gl-tag{font-size:11px;border-radius:99px;padding:4px 10px;font-weight:800}
+.gl-tag.ok{background:#dcf7e6;color:var(--green)}
+.gl-tag.no{background:#ffe2ee;color:var(--pink2)}
+.gl-tag.pending{background:#fff2d6;color:#9a6b00}
+.gl-del{border:0;background:#ffe7f0;color:var(--pink2);border-radius:10px;width:26px;height:26px;cursor:pointer;font-size:13px}
+@media(max-width:850px){
+  .gl-stats{grid-template-columns:repeat(3,1fr)}
+}
 @media(max-width:850px){
   .admin-app{padding-top:14px}
   .admin-preview{padding:18px}
