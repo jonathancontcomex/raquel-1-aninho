@@ -47,7 +47,36 @@ async function renderAdmin() {
 function allConfirmedPeople() {
   return rsvpsData
     .filter(r => r.status === 'confirmed')
-    .flatMap(r => (r.people || []).map(p => ({ rsvpId: r.id, personName: fullName(p), hostName: fullName({ first: r.host_first, last: r.host_last }) })));
+    .flatMap(r => (r.people || []).map(p => ({ rsvpId: r.id, personName: fullName(p), hostName: fullName({ first: r.host_first, last: r.host_last }), type: p.type === 'kid' ? 'Criança até 7' : 'Adulto' })));
+}
+
+// -- exportação da lista para o buffet --
+
+function exportExcel() {
+  const people = allConfirmedPeople();
+  const rows = [['Nome', 'Tipo', 'Família (responsável)'], ...people.map(p => [p.personName, p.type, p.hostName])];
+  const csv = rows.map(r => r.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(';')).join('\r\n');
+  const blob = new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `lista-confirmados-raquel-${new Date().toISOString().slice(0, 10)}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function exportPDF() {
+  const people = allConfirmedPeople().sort((a, b) => a.hostName.localeCompare(b.hostName));
+  const adults = people.filter(p => p.type === 'Adulto').length;
+  const kids = people.length - adults;
+  const rowsHtml = people.map((p, i) => `<tr><td>${i + 1}</td><td>${escapeHtml(p.personName)}</td><td>${p.type}</td><td>${escapeHtml(p.hostName)}</td></tr>`).join('');
+  $('#printArea').innerHTML = `
+    <h1>Lista de confirmados — 1 aninho da Raquel</h1>
+    <p>26 de julho de 2026 · Buffet Zupaloo</p>
+    <p><strong>Total: ${people.length}</strong> (${adults} adultos, ${kids} crianças até 7 anos)</p>
+    <table><thead><tr><th>#</th><th>Nome</th><th>Tipo</th><th>Família</th></tr></thead><tbody>${rowsHtml}</tbody></table>
+  `;
+  window.print();
 }
 
 function candidatesFor(guestName, usedKeys) {
@@ -185,5 +214,7 @@ $('#gatePassword').addEventListener('keydown', e => { if (e.key === 'Enter') try
 $('#refreshBtn').onclick = renderAdmin;
 $('#logoutBtn').onclick = async () => { await sbClient.auth.signOut(); lock() };
 $('#saveGuestList').onclick = saveGuestList;
+$('#exportExcel').onclick = exportExcel;
+$('#exportPDF').onclick = exportPDF;
 
 sbClient.auth.getSession().then(({ data: { session } }) => { if (session) unlock() });

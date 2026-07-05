@@ -48,6 +48,9 @@
 .gl-link-select{border:1px solid #f0bad0;background:#fff8fb;border-radius:10px;padding:6px 8px;font-family:'Quicksand';font-size:12px;color:var(--ink);max-width:160px}
 .gl-link-btn{border:0;background:var(--pink2);color:white;border-radius:99px;padding:6px 14px;font-size:12px;cursor:pointer;font-weight:800;white-space:nowrap}
 .gl-link-btn:hover{background:var(--pink)}
+.export-btn{border:1px solid #f0c7d7;background:white;color:var(--pink2);border-radius:12px;padding:0 14px;height:42px;font-size:14px;font-weight:800;cursor:pointer;white-space:nowrap}
+.export-btn:hover{background:#ffe7f0}
+#printArea{display:none}
 @media(max-width:850px){
   .gl-stats{grid-template-columns:repeat(3,1fr)}
 }
@@ -57,4 +60,13 @@
   .admin-head{flex-wrap:wrap}
   .admin-grid{grid-template-columns:minmax(0,1fr)}
   .stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media print{
+  body *{visibility:hidden}
+  #printArea, #printArea *{visibility:visible}
+  #printArea{display:block;position:absolute;top:0;left:0;width:100%;padding:20px}
+  #printArea h1{font-family:'Fraunces',serif;color:#d93c7c;font-size:22px;margin:0 0 4px}
+  #printArea table{width:100%;border-collapse:collapse;margin-top:14px}
+  #printArea th,#printArea td{border:1px solid #ccc;padding:6px 10px;text-align:left;font-size:13px}
+  #printArea th{background:#fbe4ee}
 }

@@ -88,10 +88,19 @@ Sprint 6:
     confirmou presença mas não estava na lista original (ex: convidado
     trouxe um familiar extra) — botão "+" adiciona e já confirma na hora.
   - "Desfazer" no nome já confirmado, caso tenha escolhido a pessoa errada.
+  - Vínculo manual de apelido: quando a pessoa confirma com o nome real mas
+    a lista tinha um apelido (ex: "Bob" x "Roberto Fernandes"), a seção de
+    confirmados sem lista tem um menu "É um apelido de..." + botão Vincular,
+    pra ligar os dois manualmente, sem depender da correspondência automática.
+- Exportação da lista de confirmados no /painel/ (botões no topo):
+  - "📊 Excel": baixa um .csv (abre direto no Excel) com Nome, Tipo
+    (Adulto/Criança até 7) e Família de cada confirmado.
+  - "🖨️ PDF": abre a caixa de impressão do navegador com uma lista limpa
+    (numerada, com totais de adultos/crianças) pronta pra imprimir ou salvar
+    como PDF — sem precisar de nenhuma ferramenta externa.
 
 Próximo passo:
 - Ilustração dedicada para o card de acompanhantes (passo 2).
-- Exportação da lista de confirmados (Excel/PDF) direto do painel.
 - Ilustração do painel administrativo (assets/illustrations/fontes-originais/original-painel.png
   já existe, mas ainda não foi encaixada — tem gráfico de rosca e cards que
   exigem mais trabalho para casar com dados dinâmicos).
