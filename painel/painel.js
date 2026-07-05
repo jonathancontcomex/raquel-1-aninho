@@ -86,8 +86,24 @@ async function renderGuestList() {
     return `<tr><td>${nameCell}</td><td>${statusCell}</td><td><button class="gl-del" data-action="remove" data-gl-id="${r.id}" title="Remover da lista">✕</button></td></tr>`;
   }).join('') || '<tr><td colspan="3">Nenhum nome na lista ainda.</td></tr>';
 
+  const pendingEntries = data.filter(r => !r.matched_rsvp_id);
+  const pendingOptions = pendingEntries.map(r => `<option value="${r.id}">${escapeHtml(r.name)}</option>`).join('');
+
   const unmatchedPeople = allConfirmedPeople().filter(p => !usedKeys.has(`${p.rsvpId}::${p.personName}`));
-  $('#unmatchedRows').innerHTML = unmatchedPeople.map(p => `<tr><td>${escapeHtml(p.personName)}</td><td>${escapeHtml(p.hostName)}</td><td><button class="gl-add-person-btn" data-action="addmatch" data-rsvp-id="${p.rsvpId}" data-person="${escapeAttr(p.personName)}" title="Adicionar à lista já confirmado">+</button></td></tr>`).join('') || '<tr><td colspan="3">Todo mundo confirmado já está na sua lista.</td></tr>';
+  $('#unmatchedRows').innerHTML = unmatchedPeople.map(p => `<tr>
+    <td>${escapeHtml(p.personName)}</td>
+    <td>${escapeHtml(p.hostName)}</td>
+    <td>
+      <div class="gl-link-row">
+        <select class="gl-link-select">
+          <option value="">É um apelido de...</option>
+          ${pendingOptions}
+        </select>
+        <button class="gl-link-btn" data-action="link" data-rsvp-id="${p.rsvpId}" data-person="${escapeAttr(p.personName)}">Vincular</button>
+      </div>
+    </td>
+    <td><button class="gl-add-person-btn" data-action="addmatch" data-rsvp-id="${p.rsvpId}" data-person="${escapeAttr(p.personName)}" title="Adicionar como nome novo, já confirmado">+ novo</button></td>
+  </tr>`).join('') || '<tr><td colspan="4">Todo mundo confirmado já está na sua lista.</td></tr>';
 }
 
 async function saveGuestList() {
@@ -132,6 +148,12 @@ document.addEventListener('click', e => {
   else if (action === 'unmatch') unmatchGuest(btn.dataset.glId);
   else if (action === 'confirm') confirmMatch(btn.dataset.glId, btn.dataset.rsvpId, btn.dataset.person);
   else if (action === 'addmatch') addAndMatch(btn.dataset.rsvpId, btn.dataset.person);
+  else if (action === 'link') {
+    const select = btn.parentElement.querySelector('.gl-link-select');
+    const glId = select.value;
+    if (!glId) { alert('Escolha primeiro a qual nome da lista essa pessoa corresponde.'); return }
+    confirmMatch(glId, btn.dataset.rsvpId, btn.dataset.person);
+  }
 });
 
 function unlock() {

@@ -42,8 +42,12 @@
 .gl-none{color:var(--muted);font-size:12px;font-style:italic}
 .gl-matched{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .gl-undo{border:1px solid #f0c7d7;background:white;color:var(--muted);border-radius:99px;padding:4px 10px;font-size:11px;cursor:pointer}
-.gl-add-person-btn{border:0;background:var(--pink2);color:white;border-radius:99px;width:28px;height:28px;font-size:14px;cursor:pointer;font-weight:900}
-.gl-add-person-btn:hover{background:var(--pink)}
+.gl-add-person-btn{border:0;background:#fff0f6;color:var(--pink2);border-radius:99px;padding:6px 12px;font-size:12px;cursor:pointer;font-weight:800;white-space:nowrap}
+.gl-add-person-btn:hover{background:#ffe0ec}
+.gl-link-row{display:flex;gap:6px;align-items:center}
+.gl-link-select{border:1px solid #f0bad0;background:#fff8fb;border-radius:10px;padding:6px 8px;font-family:'Quicksand';font-size:12px;color:var(--ink);max-width:160px}
+.gl-link-btn{border:0;background:var(--pink2);color:white;border-radius:99px;padding:6px 14px;font-size:12px;cursor:pointer;font-weight:800;white-space:nowrap}
+.gl-link-btn:hover{background:var(--pink)}
 @media(max-width:850px){
   .gl-stats{grid-template-columns:repeat(3,1fr)}
 }
