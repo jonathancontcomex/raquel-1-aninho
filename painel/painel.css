@@ -11,8 +11,17 @@
 .admin-grid{display:grid;grid-template-columns:190px minmax(0,1fr);gap:20px}
 .admin-grid>div{min-width:0}
 .sidebar{background:#ffe7f0;border-radius:18px;padding:16px}
-.side-item{padding:10px;border-radius:12px;font-weight:800;color:#9b3362}
+.side-item{padding:10px;border-radius:12px;font-weight:800;color:#9b3362;cursor:pointer}
+.side-item:hover{background:rgba(255,255,255,.6)}
 .side-item.active{background:white;color:var(--pink2)}
+.tab-panel.hidden{display:none}
+.pr-name-input{width:100%;border:1px solid #f0bad0;background:#fff8fb;border-radius:8px;padding:6px 8px;font-family:'Quicksand';font-size:13px;color:var(--ink)}
+.pr-type-select{border:1px solid #f0bad0;background:#fff8fb;border-radius:8px;padding:6px 8px;font-family:'Quicksand';font-size:13px;color:var(--ink)}
+.pr-edit-btn{border:0;background:#fff0f6;color:var(--pink2);border-radius:10px;width:30px;height:30px;cursor:pointer;font-size:14px}
+.pr-edit-btn:hover{background:#ffe0ec}
+.pr-save-btn{border:0;background:var(--green);color:white;border-radius:10px;padding:6px 12px;font-size:12px;font-weight:800;cursor:pointer}
+.pr-cancel-btn{border:1px solid #f0c7d7;background:white;color:var(--muted);border-radius:10px;padding:6px 12px;font-size:12px;cursor:pointer}
+.pr-actions{display:flex;gap:6px}
 .stats{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:12px;margin-bottom:18px}
 .stat{min-width:0;background:white;border:1px solid #f0c7d7;border-radius:16px;padding:15px;text-align:center}
 .num{font-size:32px;font-weight:900;color:var(--pink2)}

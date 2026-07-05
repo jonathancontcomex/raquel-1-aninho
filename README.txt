@@ -98,6 +98,15 @@ Sprint 6:
   - "🖨️ PDF": abre a caixa de impressão do navegador com uma lista limpa
     (numerada, com totais de adultos/crianças) pronta pra imprimir ou salvar
     como PDF — sem precisar de nenhuma ferramenta externa.
+- Abas da barra lateral do painel agora funcionam de verdade (antes eram só
+  decorativas): Resumo (estatísticas), Convidados (todo mundo confirmado,
+  editável), Famílias (tabela original por família), Crianças (só quem tem
+  até 7 anos, editável), Listas (lista de convidados x confirmados).
+- Correção manual de convidados confirmados: nas abas Convidados/Crianças,
+  o lápis (✎) abre edição de nome e tipo (Adulto/Criança até 7) de qualquer
+  pessoa — resolve casos como idade errada (ex: alguém marcado como criança
+  que na verdade é adulto). Precisa da policy em
+  supabase/rsvps-update-policy.sql (rode no SQL Editor).
 
 Próximo passo:
 - Ilustração dedicada para o card de acompanhantes (passo 2).

@@ -39,7 +39,64 @@ async function renderAdmin() {
     const host = { first: x.host_first, last: x.host_last };
     return `<tr><td>${escapeHtml(fullName(host))}</td><td>${(x.people || []).slice(1).map(p => escapeHtml(fullName(p))).join(', ') || '-'}</td><td><span class="tag">${x.status === 'confirmed' ? 'Confirmado' : 'Não irá'}</span></td><td>${new Date(x.created_at).toLocaleString('pt-BR')}</td></tr>`;
   }).join('') || '<tr><td colspan="4">Nenhuma confirmação ainda.</td></tr>';
+  renderPeopleTables();
   renderGuestList();
+}
+
+// -- tabela de convidados/crianças, editável --
+
+function personRow(rsvpId, idx, p, hostName) {
+  return `<tr>
+    <td>${escapeHtml(fullName(p))}</td>
+    <td>${p.type === 'kid' ? 'Criança até 7' : 'Adulto'}</td>
+    <td>${escapeHtml(hostName)}</td>
+    <td><button class="pr-edit-btn" data-action="editperson" data-rsvp-id="${rsvpId}" data-idx="${idx}" title="Editar">✎</button></td>
+  </tr>`;
+}
+
+function renderPeopleTables() {
+  const allRows = [];
+  const kidRows = [];
+  rsvpsData.filter(r => r.status === 'confirmed').forEach(r => {
+    const hostName = fullName({ first: r.host_first, last: r.host_last });
+    (r.people || []).forEach((p, idx) => {
+      const row = personRow(r.id, idx, p, hostName);
+      allRows.push(row);
+      if (p.type === 'kid') kidRows.push(row);
+    });
+  });
+  $('#peopleRowsAll').innerHTML = allRows.join('') || '<tr><td colspan="4">Ninguém confirmado ainda.</td></tr>';
+  $('#peopleRowsKids').innerHTML = kidRows.join('') || '<tr><td colspan="4">Nenhuma criança confirmada ainda.</td></tr>';
+}
+
+function startEditPerson(rsvpId, idx) {
+  const rsvp = rsvpsData.find(r => r.id === rsvpId);
+  if (!rsvp) return;
+  const p = rsvp.people[idx];
+  const editHtml = `
+    <td><input class="pr-name-input" data-field="first" value="${escapeAttr(p.first)}" placeholder="Nome"><input class="pr-name-input" style="margin-top:4px" data-field="last" value="${escapeAttr(p.last)}" placeholder="Sobrenome"></td>
+    <td><select class="pr-type-select" data-field="type"><option value="adult" ${p.type !== 'kid' ? 'selected' : ''}>Adulto</option><option value="kid" ${p.type === 'kid' ? 'selected' : ''}>Criança até 7</option></select></td>
+    <td>${escapeHtml(fullName({ first: rsvp.host_first, last: rsvp.host_last }))}</td>
+    <td><div class="pr-actions"><button class="pr-save-btn" data-action="saveperson" data-rsvp-id="${rsvpId}" data-idx="${idx}">Salvar</button><button class="pr-cancel-btn" data-action="cancelperson">Cancelar</button></div></td>
+  `;
+  document.querySelectorAll(`[data-action="editperson"][data-rsvp-id="${rsvpId}"][data-idx="${idx}"]`).forEach(btn => {
+    btn.closest('tr').innerHTML = editHtml;
+  });
+}
+
+async function savePerson(rsvpId, idx, row) {
+  const rsvp = rsvpsData.find(r => r.id === rsvpId);
+  if (!rsvp) return;
+  const first = row.querySelector('[data-field="first"]').value.trim();
+  const last = row.querySelector('[data-field="last"]').value.trim();
+  const type = row.querySelector('[data-field="type"]').value;
+  if (!first) { alert('Nome não pode ficar vazio.'); return }
+  const newPeople = [...rsvp.people];
+  newPeople[idx] = { first, last, type };
+  const patch = { people: newPeople };
+  if (idx === 0) { patch.host_first = first; patch.host_last = last }
+  await sbClient.from('rsvps').update(patch).eq('id', rsvpId);
+  await renderAdmin();
 }
 
 // -- lista de convidados x confirmados, com confirmação manual --
@@ -183,6 +240,20 @@ document.addEventListener('click', e => {
     if (!glId) { alert('Escolha primeiro a qual nome da lista essa pessoa corresponde.'); return }
     confirmMatch(glId, btn.dataset.rsvpId, btn.dataset.person);
   }
+  else if (action === 'editperson') startEditPerson(btn.dataset.rsvpId, Number(btn.dataset.idx));
+  else if (action === 'saveperson') savePerson(btn.dataset.rsvpId, Number(btn.dataset.idx), btn.closest('tr'));
+  else if (action === 'cancelperson') renderPeopleTables();
+});
+
+document.querySelectorAll('.side-item').forEach(item => {
+  item.addEventListener('click', () => {
+    document.querySelectorAll('.side-item').forEach(i => i.classList.remove('active'));
+    item.classList.add('active');
+    const tab = item.dataset.tab;
+    document.querySelectorAll('.tab-panel').forEach(panel => {
+      panel.classList.toggle('hidden', panel.dataset.panel !== tab);
+    });
+  });
 });
 
 function unlock() {
