@@ -37,8 +37,8 @@ async function renderAdmin() {
   $('#stFamilies').textContent = confirmed.length;
   $('#adminRows').innerHTML = data.map(x => {
     const host = { first: x.host_first, last: x.host_last };
-    return `<tr><td>${escapeHtml(fullName(host))}</td><td>${(x.people || []).slice(1).map(p => escapeHtml(fullName(p))).join(', ') || '-'}</td><td><span class="tag">${x.status === 'confirmed' ? 'Confirmado' : 'Não irá'}</span></td><td>${new Date(x.created_at).toLocaleString('pt-BR')}</td></tr>`;
-  }).join('') || '<tr><td colspan="4">Nenhuma confirmação ainda.</td></tr>';
+    return `<tr><td>${escapeHtml(fullName(host))}</td><td>${(x.people || []).slice(1).map(p => escapeHtml(fullName(p))).join(', ') || '-'}</td><td><span class="tag">${x.status === 'confirmed' ? 'Confirmado' : 'Não irá'}</span></td><td>${new Date(x.created_at).toLocaleString('pt-BR')}</td><td><button class="pr-del-btn" data-action="deletersvp" data-rsvp-id="${x.id}" title="Excluir esta confirmação">✕</button></td></tr>`;
+  }).join('') || '<tr><td colspan="5">Nenhuma confirmação ainda.</td></tr>';
   renderPeopleTables();
   renderGuestList();
 }
@@ -82,6 +82,12 @@ function startEditPerson(rsvpId, idx) {
   document.querySelectorAll(`[data-action="editperson"][data-rsvp-id="${rsvpId}"][data-idx="${idx}"]`).forEach(btn => {
     btn.closest('tr').innerHTML = editHtml;
   });
+}
+
+async function deleteRsvp(rsvpId) {
+  if (!confirm('Excluir esta confirmação? Essa ação não pode ser desfeita.')) return;
+  await sbClient.from('rsvps').delete().eq('id', rsvpId);
+  await renderAdmin();
 }
 
 async function savePerson(rsvpId, idx, row) {
@@ -231,6 +237,7 @@ document.addEventListener('click', e => {
   if (!btn) return;
   const action = btn.dataset.action;
   if (action === 'remove') removeGuestListEntry(btn.dataset.glId);
+  else if (action === 'deletersvp') deleteRsvp(btn.dataset.rsvpId);
   else if (action === 'unmatch') unmatchGuest(btn.dataset.glId);
   else if (action === 'confirm') confirmMatch(btn.dataset.glId, btn.dataset.rsvpId, btn.dataset.person);
   else if (action === 'addmatch') addAndMatch(btn.dataset.rsvpId, btn.dataset.person);

@@ -43,6 +43,8 @@
 .gl-tag.no{background:#ffe2ee;color:var(--pink2)}
 .gl-tag.pending{background:#fff2d6;color:#9a6b00}
 .gl-del{border:0;background:#ffe7f0;color:var(--pink2);border-radius:10px;width:26px;height:26px;cursor:pointer;font-size:13px}
+.pr-del-btn{border:0;background:#fde3e9;color:var(--red);border-radius:10px;width:30px;height:30px;cursor:pointer;font-size:14px}
+.pr-del-btn:hover{background:#fbc9d4}
 .gl-sub{font-family:'Fraunces',serif;color:var(--pink2);font-size:17px;margin:24px 0 4px}
 .guest-list-block .table td{white-space:normal;vertical-align:top}
 .gl-suggestions{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
