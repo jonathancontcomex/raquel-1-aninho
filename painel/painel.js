@@ -41,6 +41,71 @@ async function renderAdmin() {
   }).join('') || '<tr><td colspan="5">Nenhuma confirmação ainda.</td></tr>';
   renderPeopleTables();
   renderGuestList();
+  renderFamiliaFotos();
+}
+
+// -- fotos da família (slideshow da festa) --
+
+const FOTOS_BUCKET = 'familia-fotos';
+let pfSelectedFiles = [];
+
+function fotoPublicUrl(path) {
+  return sbClient.storage.from(FOTOS_BUCKET).getPublicUrl(path).data.publicUrl;
+}
+
+function pfSetStatus(msg, isError) {
+  const el = $('#pfUploadStatus');
+  if (!el) return;
+  el.textContent = msg || '';
+  el.classList.toggle('error', !!isError);
+}
+
+async function renderFamiliaFotos() {
+  const grid = $('#pfGallery');
+  if (!grid) return;
+  const { data, error } = await sbClient.from('familia_fotos').select('*').order('ordem', { ascending: true });
+  if (error) { console.error(error); return }
+  grid.innerHTML = data.map((f, i) => `
+    <div class="pf-tile">
+      <img src="${fotoPublicUrl(f.storage_path)}" loading="lazy" alt="Foto ${i + 1}">
+      <span class="pf-num">${i + 1}</span>
+      <button class="pf-del" data-action="deletefoto" data-foto-id="${f.id}" data-foto-path="${escapeAttr(f.storage_path)}" title="Excluir">✕</button>
+    </div>
+  `).join('') || '<p class="gl-helper">Nenhuma foto enviada ainda.</p>';
+}
+
+async function deleteFamiliaFoto(id, path) {
+  if (!confirm('Excluir esta foto do slideshow? Não dá pra desfazer.')) return;
+  await sbClient.storage.from(FOTOS_BUCKET).remove([path]);
+  await sbClient.from('familia_fotos').delete().eq('id', id);
+  renderFamiliaFotos();
+}
+
+async function uploadFamiliaFotos(files) {
+  const btn = $('#pfSendPhotos');
+  btn.disabled = true;
+  for (let i = 0; i < files.length; i++) {
+    const file = files[i];
+    pfSetStatus(`Enviando ${i + 1} de ${files.length}...`);
+    const ext = (file.name.split('.').pop() || 'jpg').toLowerCase().replace(/[^a-z0-9]/g, '') || 'jpg';
+    const path = `${Date.now()}-${crypto.randomUUID()}.${ext}`;
+    const { error: uploadError } = await sbClient.storage.from(FOTOS_BUCKET).upload(path, file, { contentType: file.type || 'image/jpeg' });
+    if (uploadError) {
+      pfSetStatus(`Erro ao enviar "${file.name}". As fotos anteriores já foram salvas — tente reenviar essa.`, true);
+      continue;
+    }
+    const { error: insertError } = await sbClient.from('familia_fotos').insert([{ storage_path: path }]);
+    if (insertError) {
+      pfSetStatus(`Foto "${file.name}" subiu, mas houve erro ao registrar.`, true);
+    }
+  }
+  pfSetStatus(`${files.length} foto(s) enviada(s)! 💗`);
+  pfSelectedFiles = [];
+  $('#pfPhotoInput').value = '';
+  $('#pfFileLabel').classList.remove('has-files');
+  $('#pfFileLabelText').textContent = '📷 Escolher fotos (pode selecionar várias de uma vez)';
+  btn.disabled = true;
+  renderFamiliaFotos();
 }
 
 // -- tabela de convidados/crianças, editável --
@@ -250,7 +315,24 @@ document.addEventListener('click', e => {
   else if (action === 'editperson') startEditPerson(btn.dataset.rsvpId, Number(btn.dataset.idx));
   else if (action === 'saveperson') savePerson(btn.dataset.rsvpId, Number(btn.dataset.idx), btn.closest('tr'));
   else if (action === 'cancelperson') renderPeopleTables();
+  else if (action === 'deletefoto') deleteFamiliaFoto(btn.dataset.fotoId, btn.dataset.fotoPath);
 });
+
+$('#pfPhotoInput').addEventListener('change', () => {
+  pfSelectedFiles = Array.from($('#pfPhotoInput').files || []);
+  const label = $('#pfFileLabel');
+  if (pfSelectedFiles.length) {
+    label.classList.add('has-files');
+    $('#pfFileLabelText').textContent = `✓ ${pfSelectedFiles.length} foto(s) selecionada(s)`;
+  } else {
+    label.classList.remove('has-files');
+    $('#pfFileLabelText').textContent = '📷 Escolher fotos (pode selecionar várias de uma vez)';
+  }
+  $('#pfSendPhotos').disabled = !pfSelectedFiles.length;
+  pfSetStatus('');
+});
+
+$('#pfSendPhotos').onclick = () => uploadFamiliaFotos(pfSelectedFiles);
 
 document.querySelectorAll('.side-item').forEach(item => {
   item.addEventListener('click', () => {
