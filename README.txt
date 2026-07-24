@@ -109,11 +109,13 @@ Sprint 6:
   supabase/rsvps-update-policy.sql (rode no SQL Editor).
 
 Sprint 7:
-- Fotos da família (painel/, aba "Fotos"): agora dá para reordenar as fotos que
-  passam no slideshow, com setas ◀ ▶ em cada miniatura (troca a `ordem` dela
-  com a da vizinha). Precisa da policy em
-  supabase/familia-fotos-update-policy.sql (rode no SQL Editor antes de usar,
-  senão o update é bloqueado pela Row Level Security).
+- Fotos da família (painel/, aba "Fotos"): agora dá para reordenar as fotos
+  que passam no slideshow arrastando e soltando (segura o ⠿ no canto de cada
+  miniatura e arrasta pra posição desejada; funciona com mouse e toque).
+  Ao soltar, a nova ordem de todas as fotos é salva de uma vez (coluna
+  `ordem`). Precisa da policy em supabase/familia-fotos-update-policy.sql
+  (rode no SQL Editor antes de usar, senão o update é bloqueado pela Row
+  Level Security).
 - Slideshow (slideshow/slideshow.js): intervalo entre fotos reduzido de 6s
   para 4s (constante SLIDE_MS).
 
