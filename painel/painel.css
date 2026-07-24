@@ -73,6 +73,10 @@
 .pf-tile .pf-del{position:absolute;top:6px;right:6px;width:26px;height:26px;border-radius:50%;border:none;background:rgba(0,0,0,.55);color:#fff;font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center}
 .pf-tile .pf-del:hover{background:var(--red)}
 .pf-tile .pf-num{position:absolute;left:6px;bottom:6px;background:rgba(0,0,0,.55);color:#fff;font-size:10px;font-weight:800;padding:2px 7px;border-radius:99px}
+.pf-tile .pf-move{position:absolute;top:6px;left:6px;display:flex;gap:4px}
+.pf-tile .pf-move button{width:24px;height:24px;border-radius:50%;border:none;background:rgba(0,0,0,.55);color:#fff;font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.pf-tile .pf-move button:hover:not(:disabled){background:var(--red)}
+.pf-tile .pf-move button:disabled{opacity:.3;cursor:default}
 @media(max-width:850px){
   .pf-gallery{grid-template-columns:repeat(3,1fr)}
 }

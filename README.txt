@@ -108,6 +108,15 @@ Sprint 6:
   que na verdade é adulto). Precisa da policy em
   supabase/rsvps-update-policy.sql (rode no SQL Editor).
 
+Sprint 7:
+- Fotos da família (painel/, aba "Fotos"): agora dá para reordenar as fotos que
+  passam no slideshow, com setas ◀ ▶ em cada miniatura (troca a `ordem` dela
+  com a da vizinha). Precisa da policy em
+  supabase/familia-fotos-update-policy.sql (rode no SQL Editor antes de usar,
+  senão o update é bloqueado pela Row Level Security).
+- Slideshow (slideshow/slideshow.js): intervalo entre fotos reduzido de 6s
+  para 4s (constante SLIDE_MS).
+
 Próximo passo:
 - Ilustração dedicada para o card de acompanhantes (passo 2).
 - Ilustração do painel administrativo (assets/illustrations/fontes-originais/original-painel.png

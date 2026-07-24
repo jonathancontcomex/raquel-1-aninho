@@ -48,6 +48,7 @@ async function renderAdmin() {
 
 const FOTOS_BUCKET = 'familia-fotos';
 let pfSelectedFiles = [];
+let pfPhotos = [];
 
 function fotoPublicUrl(path) {
   return sbClient.storage.from(FOTOS_BUCKET).getPublicUrl(path).data.publicUrl;
@@ -65,10 +66,15 @@ async function renderFamiliaFotos() {
   if (!grid) return;
   const { data, error } = await sbClient.from('familia_fotos').select('*').order('ordem', { ascending: true });
   if (error) { console.error(error); return }
+  pfPhotos = data;
   grid.innerHTML = data.map((f, i) => `
     <div class="pf-tile">
       <img src="${fotoPublicUrl(f.storage_path)}" loading="lazy" alt="Foto ${i + 1}">
       <span class="pf-num">${i + 1}</span>
+      <div class="pf-move">
+        <button data-action="movefoto" data-foto-id="${f.id}" data-dir="left" ${i === 0 ? 'disabled' : ''} title="Mover para trás">◀</button>
+        <button data-action="movefoto" data-foto-id="${f.id}" data-dir="right" ${i === data.length - 1 ? 'disabled' : ''} title="Mover para frente">▶</button>
+      </div>
       <button class="pf-del" data-action="deletefoto" data-foto-id="${f.id}" data-foto-path="${escapeAttr(f.storage_path)}" title="Excluir">✕</button>
     </div>
   `).join('') || '<p class="gl-helper">Nenhuma foto enviada ainda.</p>';
@@ -78,6 +84,17 @@ async function deleteFamiliaFoto(id, path) {
   if (!confirm('Excluir esta foto do slideshow? Não dá pra desfazer.')) return;
   await sbClient.storage.from(FOTOS_BUCKET).remove([path]);
   await sbClient.from('familia_fotos').delete().eq('id', id);
+  renderFamiliaFotos();
+}
+
+async function moveFamiliaFoto(id, dir) {
+  const idx = pfPhotos.findIndex(f => f.id === id);
+  const swapIdx = dir === 'left' ? idx - 1 : idx + 1;
+  if (idx === -1 || swapIdx < 0 || swapIdx >= pfPhotos.length) return;
+  const a = pfPhotos[idx], b = pfPhotos[swapIdx];
+  const { error: err1 } = await sbClient.from('familia_fotos').update({ ordem: b.ordem }).eq('id', a.id);
+  const { error: err2 } = await sbClient.from('familia_fotos').update({ ordem: a.ordem }).eq('id', b.id);
+  if (err1 || err2) { console.error(err1 || err2); alert('Não foi possível reordenar. Verifique se a policy de update de familia_fotos foi criada no Supabase.'); return }
   renderFamiliaFotos();
 }
 
@@ -316,6 +333,7 @@ document.addEventListener('click', e => {
   else if (action === 'saveperson') savePerson(btn.dataset.rsvpId, Number(btn.dataset.idx), btn.closest('tr'));
   else if (action === 'cancelperson') renderPeopleTables();
   else if (action === 'deletefoto') deleteFamiliaFoto(btn.dataset.fotoId, btn.dataset.fotoPath);
+  else if (action === 'movefoto') moveFamiliaFoto(btn.dataset.fotoId, btn.dataset.dir);
 });
 
 $('#pfPhotoInput').addEventListener('change', () => {

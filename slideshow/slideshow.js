@@ -1,5 +1,5 @@
 const BUCKET = 'familia-fotos';
-const SLIDE_MS = 6000;
+const SLIDE_MS = 4000;
 const EMPTY_RETRY_MS = 15000;
 
 const imgA = document.getElementById('imgA');
