@@ -66,18 +66,19 @@ async function renderFamiliaFotos() {
   const { data, error } = await sbClient.from('familia_fotos').select('*').order('ordem', { ascending: true });
   if (error) { console.error(error); return }
   grid.innerHTML = data.map((f, i) => `
-    <div class="pf-tile" data-foto-id="${f.id}">
-      <span class="pf-drag" title="Arraste para reordenar">⠿</span>
+    <div class="pf-tile" data-foto-id="${f.id}" title="Arraste para reordenar">
+      <span class="pf-drag">⠿</span>
       <img src="${fotoPublicUrl(f.storage_path)}" loading="lazy" alt="Foto ${i + 1}" draggable="false">
       <span class="pf-num">${i + 1}</span>
       <button class="pf-del" data-action="deletefoto" data-foto-id="${f.id}" data-foto-path="${escapeAttr(f.storage_path)}" title="Excluir">✕</button>
     </div>
   `).join('') || '<p class="gl-helper">Nenhuma foto enviada ainda.</p>';
-  grid.querySelectorAll('.pf-drag').forEach(handle => {
-    handle.addEventListener('pointerdown', e => {
+  grid.querySelectorAll('.pf-tile').forEach(tile => {
+    tile.addEventListener('pointerdown', e => {
+      if (e.target.closest('.pf-del')) return;
       e.preventDefault();
-      pfDraggedEl = handle.closest('.pf-tile');
-      pfDraggedEl.classList.add('pf-dragging');
+      pfDraggedEl = tile;
+      tile.classList.add('pf-dragging');
     });
   });
 }
